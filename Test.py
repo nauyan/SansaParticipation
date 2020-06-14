@@ -1,7 +1,7 @@
-import tensorflow.keras
+import keras
 import glob
 import numpy as np
-from tensorflow.keras.preprocessing.image import array_to_img, img_to_array, load_img
+from keras.preprocessing.image import array_to_img, img_to_array, load_img
 import os 
 import pandas as pd
 import json
@@ -16,7 +16,7 @@ Images = []
 Names = []
 for x in progressbar.progressbar(testList):
     name = x
-    img = img_to_array(load_img(name, color_mode='rgb'))
+    img = img_to_array(load_img(name, color_mode='grayscale'))
     img = img/255.0
     Images.append(img)
     Names.append(name)
@@ -28,9 +28,9 @@ for x in progressbar.progressbar(testList):
 Images = np.asarray(Images)
 Names = np.asarray(Names)
 
-import efficientnet.tfkeras
+import efficientnet.keras
 
-model = tensorflow.keras.models.load_model("Final.h5") 
+model = keras.models.load_model("Final.h5") 
 
 pred = model.predict(Images, verbose=1)
 print(pred)

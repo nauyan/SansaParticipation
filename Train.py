@@ -14,11 +14,12 @@ from keras.models import Model
 from keras.preprocessing.image import ImageDataGenerator
 import matplotlib.pyplot as plt
 
-#import efficientnet.keras as efn 
+import efficientnet.keras as efn 
 #from keras.applications.resnext import ResNeXt50
 from keras.applications.resnet import ResNet50
 from keras.applications.mobilenet_v2 import MobileNetV2
 from keras.applications.densenet import DenseNet121
+from keras.applications.inception_resnet_v2 import InceptionResNetV2
 
 from keras.layers import Dropout
 from keras.layers import Flatten
@@ -32,7 +33,7 @@ im_width = 384
 im_height = 384
 epochs = 50
 dropout = 0.1
-batch_size = 4
+batch_size = 16
 
 dataset_dir = "dataset/train_set/"
 """
@@ -72,21 +73,24 @@ datagen = ImageDataGenerator(
 
 train_generator = datagen.flow_from_directory(
         dataset_dir, target_size=(im_height,im_width),
+        color_mode="grayscale",
         subset='training', class_mode='binary', batch_size=batch_size)
 
 val_generator = datagen.flow_from_directory(
         dataset_dir, target_size=(im_height,im_width),
+        color_mode="grayscale",
         subset='validation', class_mode='binary', batch_size=batch_size)
 
-#steps_per_epoch = 5000
-#validation_steps = 1000
+steps_per_epoch = 400
+validation_steps = 100
 
 
 
 # Training Model Layers Arrangment
-#baseModel = efn.EfficientNetB0(weights="imagenet", include_top=False,input_shape=(im_width,im_height,3))
-baseModel = MobileNetV2(weights=None, include_top=False,input_shape=(im_width,im_height,3))
+#baseModel = efn.EfficientNetB0(weights=None, include_top=False,input_shape=(im_width,im_height,1))
+#baseModel = MobileNetV2(weights=None, include_top=False,input_shape=(im_width,im_height,3))
 #baseModel = DenseNet121(weights=None, include_top=False,input_shape=(im_width,im_height,3))
+baseModel = InceptionResNetV2(weights=None, include_top=False,input_shape=(im_width,im_height,1))
 
 headModel = baseModel.output
 headModel = GlobalAveragePooling2D(name='avg_pool')(headModel)
@@ -119,7 +123,7 @@ callbacks = [
 #results = model.fit(X_train, y_train, batch_size=batch_size,validation_data=(X_test, y_test), epochs=epochs, callbacks=callbacks)
 results = model.fit_generator(
         train_generator, 
-        #steps_per_epoch = steps_per_epoch, validation_steps = validation_steps,
+        steps_per_epoch = steps_per_epoch, validation_steps = validation_steps,
         epochs=epochs,
         validation_data=val_generator, 
         callbacks=callbacks,
