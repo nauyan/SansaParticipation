@@ -6,7 +6,7 @@ import os
 import pandas as pd
 import json
 import progressbar
-os.environ["CUDA_VISIBLE_DEVICES"] = "-1"
+os.environ["CUDA_VISIBLE_DEVICES"] = "0"
 
 
 testList = glob.glob("dataset/test_set/"+"*jpeg")
