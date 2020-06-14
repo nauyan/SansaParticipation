@@ -38,10 +38,14 @@ print(pred)
 Names_Sub = []
 for val in Names:
     tmp = os.path.splitext(val)[0]
-    Names_Sub.append(tmp[14:])
+    Names_Sub.append(tmp[17:])
     
 df = pd.DataFrame()
 df['ID']  = Names_Sub
 df['Label']  = pred
 #print(df)
+
+import os
+os.remove("submission.csv")
+print("File Removed!")
 df.to_csv('submission.csv', index=False)

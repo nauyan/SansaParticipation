@@ -13,7 +13,7 @@ lats = []
 lons = []
 labels = []
 
-for i in progressbar.progressbar(range(1000000)):
+for i in progressbar.progressbar(range(10000000)):
     #lon = 28 + random.random()*0.5
     lon = random.randint(27,28)+random.random()*1.0
     #lat = -26 + random.random()*0.5

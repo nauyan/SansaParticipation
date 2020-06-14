@@ -4,21 +4,26 @@ import pandas as pd
 import numpy as np
 import shutil  
 import os
-from tensorflow.keras.preprocessing.image import array_to_img, img_to_array, load_img
+from keras.preprocessing.image import array_to_img, img_to_array, load_img
 from sklearn.model_selection import train_test_split
-import tensorflow.keras
+import keras
 
 from zipfile import ZipFile
-from tensorflow.keras.callbacks import EarlyStopping, ModelCheckpoint, ReduceLROnPlateau
-from tensorflow.keras.models import Model
-from tensorflow.keras.preprocessing.image import ImageDataGenerator
+from keras.callbacks import EarlyStopping, ModelCheckpoint, ReduceLROnPlateau
+from keras.models import Model
+from keras.preprocessing.image import ImageDataGenerator
 import matplotlib.pyplot as plt
 
-import efficientnet.tfkeras as efn 
-from tensorflow.keras.layers import Dropout
-from tensorflow.keras.layers import Flatten
-from tensorflow.keras.layers import Dense
-from tensorflow.keras.layers import GlobalAveragePooling2D
+#import efficientnet.keras as efn 
+#from keras.applications.resnext import ResNeXt50
+from keras.applications.resnet import ResNet50
+from keras.applications.mobilenet_v2 import MobileNetV2
+from keras.applications.densenet import DenseNet121
+
+from keras.layers import Dropout
+from keras.layers import Flatten
+from keras.layers import Dense
+from keras.layers import GlobalAveragePooling2D
 
 import shutil
 import json
@@ -79,7 +84,10 @@ val_generator = datagen.flow_from_directory(
 
 
 # Training Model Layers Arrangment
-baseModel = efn.EfficientNetB0(weights="imagenet", include_top=False,input_shape=(im_width,im_height,3))
+#baseModel = efn.EfficientNetB0(weights="imagenet", include_top=False,input_shape=(im_width,im_height,3))
+baseModel = MobileNetV2(weights=None, include_top=False,input_shape=(im_width,im_height,3))
+#baseModel = DenseNet121(weights=None, include_top=False,input_shape=(im_width,im_height,3))
+
 headModel = baseModel.output
 headModel = GlobalAveragePooling2D(name='avg_pool')(headModel)
 headModel = Dropout(dropout, name='top_dropout')(headModel)
@@ -87,8 +95,8 @@ headModel = Dense(1,activation='sigmoid')(headModel)
 model = Model(inputs=baseModel.input, outputs=headModel)
 
 # Loss Function and its Parameters amsgrad=True
-adam = tensorflow.keras.optimizers.Adam(amsgrad=True)
-sgd = tensorflow.keras.optimizers.SGD(learning_rate=0.01, momentum=0.0, nesterov=True)
+adam = keras.optimizers.Adam(amsgrad=True)
+sgd = keras.optimizers.SGD(learning_rate=0.01, momentum=0.0, nesterov=True)
 
 # Compilation of Model
 model.compile(loss='binary_crossentropy',optimizer=adam,metrics=['accuracy'])
